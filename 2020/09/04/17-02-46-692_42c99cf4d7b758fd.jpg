@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ============================================ -->
+
+<meta property="og:title" content="PerisanGig پرشین گیگ" />
+<meta property="og:description"  content="پرشین گیگ، ارائه دهنده انواع خدمات هاستینگ و میزبانی فایل و خرید سرور مجازی برای اولین بار در ایران به صورت ابری، با کیفیت عالی و قیمت مناسب" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fa_IR" />
+<meta property="og:site_name" content="پرشین‌گیگ" />
+<meta property="og:url" content="http://www.persiangig.com/" />
+
+<!-- ============================================ -->
+  <meta charset="utf-8">
+  <link rel='stylesheet' href='/stylesheets/bootstrap.min.css'/>
+  <link rel='stylesheet' href='/stylesheets/bootstrap-rtl.min.css'/>
+  <link rel='stylesheet' href='/stylesheets/font-awesome.min.css'/>
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <script type="text/javascript" src="/javascripts/jwplayer/jwplayer.js"></script>
+  <!--<script type="text/javascript">jwplayer.key="VE+Tu44Xa2szkqX2PqIJzd9z6OABUFq5pz3S8g==";</script>-->
+  <script type="text/javascript">jwplayer.key = "cx4oeolupNF36GqejCTyIO+qS0QXzYW21w1Oog==";</script>
+  <link rel="icon" href="/images/favicon.ico">
+  <link rel="shortcut icon" href="/images/favicon.ico"/>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script>
+
+    function canvasReady() {
+      $('.canvas').addClass('ready')
+    }
+
+    function controlImage($, previewLink, name) {
+      var img = new Image()
+      img.src = previewLink
+      img.onload = function () {
+        $('.canvas').html("<img src=" + img.src + " alt='" + name + "' />")
+        canvasReady()
+      }
+      img.onerror = function() {
+        $('.canvas').html('<article class="text-danger">پیش نمایش با مشکل مواجه شد</article>')
+        canvasReady()
+      }
+    }
+
+    function controlPlayer($, previewLink) {
+      jwplayer('player').setup({
+        file: previewLink,
+        logo: {
+          file: '/images/pg.png',
+          link: 'http:/cdn.persiangig.com:3000',
+          margin: 8,
+          position: 'top-left'
+        },
+        abouttext: 'Persiangig.com',
+        aboutlink: 'http://persiangig.com'
+      })
+
+      jwplayer().onReady(function() {
+        canvasReady()
+      })
+
+      jwplayer().onPlay(function() {
+        sendReport('DownloadPage-Play', 'Play Button Clicked', 'Play')
+      })
+    }
+
+    function toggleDownloadButton(disableStatus) {
+      const activeText = 'دانلود'
+      const disabledText = 'در حال دانلود'
+      jQuery('#js-download').attr('disabled', disableStatus).html(disableStatus ? disabledText : activeText)
+    }
+
+    function showMessage(message) {
+      jQuery('#js-message').html('').removeClass('hidden').html(message)
+    }
+
+    function hideMessage() {
+      jQuery('#js-message').addClass('hidden').html('')
+    }
+
+    function showModalMessage(message) {
+      jQuery('#js-modal-message').html('').removeClass('hidden').html(message)
+    }
+
+    function hideModalMessage() {
+      jQuery('#js-modal-message').html('').addClass('hidden')
+    }
+
+    function getDownloadToken(uuid, name) {
+      toggleDownloadButton(true)
+
+      jQuery.getJSON('http://cdn.persiangig.com/cfs/rest/publicAccess/' + uuid + '/generateDownloadLink', function (res) {
+        window.location.href = 'http://cdn.persiangig.com/dl/' + res.token + '/' + uuid + '/' + name
+        toggleDownloadButton(false)
+      }, function (err) {
+        toggleDownloadButton(false)
+        showMessage(err)
+        setTimeout(function () {
+          hideMessage()
+        }, 2500)
+      })
+    }
+
+    function showModal(uuid) {
+      jQuery('#js-modal-broken-link').modal()
+    }
+
+    function autoHeightCanvas() {
+      jQuery('.canvas').css('height', 'auto')
+    }
+
+    function requestSpamLink(form) {
+      var txt = jQuery('#broken-link').val()
+      showModalMessage(' متن شما ' + txt)
+      return false
+    }
+
+    function sendReport(category, action, label) {
+      ga('send', 'event', category, action, label)
+    }
+
+    function copyToClipboard() {
+      var copyTextareaBtn = document.querySelector('.embed-code-container');
+
+      copyTextareaBtn.addEventListener('click', function(event) {
+        var copyTextarea = document.querySelector('.embed-code');
+        copyTextarea.select();
+
+        try {
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+        } catch (err) {
+          console.log('Oops, unable to copy');
+        }
+      });
+    }
+
+    jQuery(document).ready(function() {
+      jQuery('#js-top-ad').on('click', function() {
+        sendReport('DownloadPage-Ad', 'Top Ad Click', 'Click Ad')
+      })
+      jQuery('#js-left-ad').on('click', function() {
+        sendReport('DownloadPage-Ad', 'Left Ad Click', 'Click Ad')
+      })
+      jQuery('#js-right-ad').on('click', function() {
+        sendReport('DownloadPage-Ad', 'Right Ad Click', 'Click Ad')
+      })
+      jQuery('#js-bottom-ad').on('click', function() {
+        sendReport('DownloadPage-Ad', 'Bottom Ad Click', 'Click Ad')
+      })
+    })
+
+    jQuery(document).on('hidden.bs.modal', function () {
+      jQuery('#broken-link').val('')
+    })
+
+  </script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed"
+              data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/">
+        <img src="http://www.persiangig.com/wp-content/uploads/2016/05/persiangig.png" class="logo-navbar" style="width:160px;padding-top:5px;"/>
+      </a>
+    </div>
+    <div id="navbar-collapse-1" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/vm">
+            <i aria-hidden="true" class="fa fa-server"></i>
+            &nbsp;
+            سرور مجازی
+          </a>
+        </li>
+        <li>
+          <a href="/home">
+            <i aria-hidden="true" class="fa fa-files-o"></i>
+            &nbsp;
+            میزبانی فایل
+          </a>
+        </li>
+        <li>
+          <a href="/hosting">
+            <i aria-hidden="true" class="fa fa-globe"></i>
+            &nbsp;
+            وب هاستینگ
+          </a>
+        </li>
+        <li>
+          <a href="/vm/support">
+            <i aria-hidden="true" class="fa fa-envelope-o"></i>
+            &nbsp;
+            پشتیبانی
+          </a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right pull-left">
+        
+        
+        <li>
+          <a href="http://cdn.persiangig.com/auth">
+            ورود / عضویت
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+  <main class="main">
+  <div class="clearfix">
+    <div class="col-md-2">
+      <div class="iframe-wrapper">
+        <div class="iframe-cover" id="js-left-ad"></div>
+        
+          <iframe scrolling="no" src="http://www.persiangig.com/static-content/ads/html/pg_ad_left.html" frameborder="0"></iframe>
+        
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="iframe-wrapper">
+        <div class="iframe-cover" id="js-top-ad"></div>
+        
+          <iframe scrolling="no" src="http://www.persiangig.com/static-content/ads/html/pg_ad_header.html" frameborder="0"></iframe>
+        
+      </div>
+      <div class="canvas">
+        
+        
+          <article>
+            <h4 class="placeholder">SmithMarx</h4>
+          </article>
+          <script>
+            canvasReady()
+          </script>
+        
+      </div>
+      <div id="js-message" class="alert alert-danger hidden"></div>
+      <div class="info">
+        <h1 class="title pull-right">SmithMarx </h1>
+        <button id="js-download" onclick="sendReport('DownloadPage-Download', 'Download Button Click', 'Download File');getDownloadToken('pDg5xXl7EA', 'SmithMarx')" class="btn btn-info btn-download pull-left">دانلود</button>
+      </div>
+      <div class="info">
+        <div class="stats pull-right">
+          <ul class="list-unstyled list-inline">
+            <li>
+              <i class="fa fa-download"></i>
+              <span id="js-download-stat">191</span>
+            </li>
+            <li>
+              <i class="fa fa-cloud-download"></i>
+              88.39 کیلوبایت 
+            </li>
+          </ul>
+        </div>
+        <div class="share pull-left">
+          <ul class="list-unstyled list-inline">
+            <li class="pull-right">
+              <a disabled onclick="showModal('pDg5xXl7EA')" href="#" class="disabled btn btn-danger btn-xs">
+                <span>گزارش تخلف</span>
+              </a>
+            </li>
+            <li>
+              <a target="_blank" onclick="sendReport('DownloadPage-Share', 'Facebook Click', 'Facebook Share')" href="https://www.facebook.com/sharer/sharer.php?u=cdn.persiangig.com%2Fdownload%2FpDg5xXl7EA%2FSmithMarx%2Fdl"><i class="fa fa-facebook-square facebook"></i></a>
+            </li>
+            <li>
+              <a target="_blank" onclick="sendReport('DownloadPage-Share', 'Google Plus Click', 'Google Plus Share')" href="https://plus.google.com/share?url=cdn.persiangig.com%2Fdownload%2FpDg5xXl7EA%2FSmithMarx%2Fdl"><i class="fa fa-google-plus-square google-plus"></i></a>
+            </li>
+            <li>
+              <a target="_blank" onclick="sendReport('DownloadPage-Share', 'Twitter Click', 'Twitter Share')" href="https://twitter.com/home?status=cdn.persiangig.com%2Fdownload%2FpDg5xXl7EA%2FSmithMarx%2Fdl"><i class="fa fa-twitter-square twitter"></i></a>
+            </li>
+            <li>
+              <a target="_blank" onclick="sendReport('DownloadPage-Share', 'Telegram Click', 'Telegram Share')" href="https://telegram.me/share/url?url=cdn.persiangig.com%2Fdownload%2FpDg5xXl7EA%2FSmithMarx%2Fdl"><i class="fa fa-telegram twitter"></i></a>
+            </li>
+          </ul>
+          <ul class="list-unstyled list-inline">
+            <li>
+              <div class="g-plusone"></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      
+
+      <hr style="margin-bottom: 5px;">
+
+      <div class="info">
+        <p>
+          برای نمایش این فایل کافی است از لینک زیر استفاده و آن را در مکان مناسب کپی نمایید.
+        </p>
+        <div class="embed-code-container">
+
+          <textarea readonly class="embed-code">
+            <div id="pg-embed-pDg5xXl7EA"><script type="text/JavaScript" src="http://cdn.persiangig.com/embed/pDg5xXl7EA"></script></div>
+          </textarea>
+
+          <button onclick="copyToClipboard();sendReport('DownloadPage-Embed', 'Embed Script Copy', 'Copy Embed Script')" class="btn btn-sm btn-primary">کپی کن</button>
+
+        </div>
+
+      </div>
+      <div class="iframe-wrapper">
+        <div class="iframe-cover" id="js-bottom-ad"></div>
+        
+          <iframe scrolling="no" src="http://www.persiangig.com/static-content/ads/html/pg_ad_footer.html" frameborder="0"></iframe>
+        
+      </div>
+
+    </div>
+    <div class="col-md-2">
+      <div class="iframe-wrapper">
+        <div class="iframe-cover" id="js-right-ad"></div>
+        
+          <iframe scrolling="no" src="http://www.persiangig.com/static-content/ads/html/pg_ad_right.html" frameborder="0"></iframe>
+        
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+<footer class="footer">
+  <span>Powered by </span>
+  <a href="/">PersianGig</a>
+  <span> IaaS Cloud Platform</span>
+</footer>
+
+<div class="modal fade" tabindex="-1" id="js-modal-broken-link" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">گزارش خرابی لینک</h4>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="return requestSpamLink()">
+          <div class="alert hidden" id="js-modal-message"></div>
+          <div class="form-group">
+            <label for="broken-link" style="margin-bottom: 10px;">لطفا توضیح مختصری در مورد نوع تخلف این فایل بنویسید</label>
+            <textarea name="brokenLink" style="min-height: 150px;" class="form-control" id="broken-link"></textarea>
+          </div>
+          <div class="clearfix">
+            <button type="submit" class="btn btn-success pull-left">ارسال</button>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script src="/javascripts/bootstrap.min.js"></script>
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+  ga('create', 'UA-88749357-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<script src="https://apis.google.com/js/platform.js" async defer>
+  {lang: 'fa'}
+</script>
+</body>
+</html>
